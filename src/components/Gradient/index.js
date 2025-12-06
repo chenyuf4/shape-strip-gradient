@@ -5,6 +5,7 @@ import { vertexShader } from "./vertexShader";
 import * as THREE from "three";
 import { useControls, folder, button } from "leva";
 import { useFrame } from "@react-three/fiber";
+
 const Gradient = () => {
   const { viewport, size, gl } = useThree();
   const meshRef = useRef(null);
@@ -23,23 +24,31 @@ const Gradient = () => {
     colorNoiseSize,
     colorNoiseStrength,
     shapeSize,
+    bounceSpeed,
+    bounceOffset,
+    bounceMagnitude,
   } = useControls({
     colors: folder({
-      color1: "#cce5ff",
-      color2: "#99ccff",
-      color3: "#66b2ff",
-      color4: "#3299ff",
-      color5: "#007fff",
-      color6: "#0066cc",
-      color7: "#004c99",
-      color8: "#003366",
-      color9: "#001933",
-      spacing: { value: 0.04, min: 0.01, max: 0.05, step: 0.001 },
+      color1: "#f6efe6",
+      color2: "#eadfce",
+      color3: "#dfd0b7",
+      color4: "#d3c0a0",
+      color5: "#c7b18a",
+      color6: "#baa273",
+      color7: "#ad935d",
+      color8: "#9f8447",
+      color9: "#907532",
+      spacing: { value: 0.037, min: 0.01, max: 0.05, step: 0.001 },
       shapeSize: { value: 0.4, min: 0.1, max: 1.0, step: 0.001 },
     }),
     noise: folder({
-      colorNoiseStrength: { value: 0.8, min: 0, max: 1.0, step: 0.01 },
+      colorNoiseStrength: { value: 0.63, min: 0, max: 1.0, step: 0.01 },
       colorNoiseSize: { value: 0.62, min: 0.01, max: 5.0, step: 0.01 },
+    }),
+    animation: folder({
+      bounceSpeed: { value: 0.8, min: 0, max: 1.0, step: 0.01 },
+      bounceOffset: { value: 0.3, min: 0.01, max: 1.0, step: 0.01 },
+      bounceMagnitude: { value: 0.008, min: 0.01, max: 0.5, step: 0.001 },
     }),
     Screenshot: button(() => {
       const link = document.createElement("a");
@@ -74,13 +83,18 @@ const Gradient = () => {
       u_colorNoiseSize: { value: colorNoiseSize },
       u_colorNoiseStrength: { value: colorNoiseStrength },
       u_shapeSize: { value: shapeSize },
+      u_time: { value: 0 },
+      u_bounceSpeed: { value: bounceSpeed },
+      u_bounceOffset: { value: bounceOffset },
+      u_bounceMagnitude: { value: bounceMagnitude },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
-  useFrame(() => {
+  useFrame((state) => {
     if (meshRef.current) {
+      const time = state.clock.getElapsedTime();
       meshRef.current.material.uniforms.u_viewportSize.value.set(
         size.width,
         size.height
@@ -101,6 +115,11 @@ const Gradient = () => {
       meshRef.current.material.uniforms.u_colorNoiseStrength.value =
         colorNoiseStrength;
       meshRef.current.material.uniforms.u_shapeSize.value = shapeSize;
+      meshRef.current.material.uniforms.u_time.value = time;
+      meshRef.current.material.uniforms.u_bounceSpeed.value = bounceSpeed;
+      meshRef.current.material.uniforms.u_bounceOffset.value = bounceOffset;
+      meshRef.current.material.uniforms.u_bounceMagnitude.value =
+        bounceMagnitude;
     }
   });
   return (

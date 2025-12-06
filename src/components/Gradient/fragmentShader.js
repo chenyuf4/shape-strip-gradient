@@ -8,25 +8,44 @@ export const fragmentShader = `
     uniform float u_colorNoiseSize;
     uniform float u_colorNoiseStrength;
     uniform float u_shapeSize;
+    uniform float u_time;
+    uniform float u_bounceSpeed;
+    uniform float u_bounceOffset;
+    uniform float u_bounceMagnitude;
 
 
      // add noise shader
     ${noise}
 
+    float getBoundary(int index) {
+        return u_shapeSize - float(index) * u_spacing + sin(u_time * u_bounceSpeed + float(index) * u_bounceOffset) * u_bounceMagnitude;
+    }
+
     const int COLOR_COUNT = 9;
     void main() {
         vec2 position = v_Uv;
         position -= 0.5;
-        position *= 2.0;
+        position *= 2.0;  
         position.x *= min(1., u_viewportSize.x / u_viewportSize.y);
         position.y *= min(1., u_viewportSize.y / u_viewportSize.x);
-        vec3 color = u_colors[6];
+        vec3 color = u_colors[8];
         float dist = length(position);
         float aa = fwidth(dist);
 
-        int index = int(clamp(floor((u_shapeSize - dist) / u_spacing), 0.0, float(COLOR_COUNT - 1)));
-        float outer = u_shapeSize - float(index) * u_spacing;
-        float tOuter = smoothstep(outer + aa, outer, dist);
+        
+        // 呼吸式bounce
+        float animatedBoundary = getBoundary(0);
+        int index = 0;
+
+        // 逐层检查哪一层覆盖当前像素
+        for (int i = COLOR_COUNT - 1; i >= 0; i--) {
+            if (dist <= getBoundary(i)) {
+                index = i;
+                animatedBoundary = getBoundary(i);
+                break;
+            }
+        }
+        float tOuter = smoothstep(animatedBoundary + aa, animatedBoundary, dist);
      
         color = mix(color, u_colors[index], tOuter);
 
