@@ -42,7 +42,7 @@ const Gradient = () => {
       shapeSize: { value: 0.4, min: 0.1, max: 1.0, step: 0.001 },
     }),
     noise: folder({
-      colorNoiseStrength: { value: 0.63, min: 0, max: 1.0, step: 0.01 },
+      colorNoiseStrength: { value: 0.3, min: 0, max: 1.0, step: 0.01 },
       colorNoiseSize: { value: 0.62, min: 0.01, max: 5.0, step: 0.01 },
     }),
     animation: folder({
