@@ -5,7 +5,6 @@ export const fragmentShader = `
     uniform vec2 u_viewportSize;
     uniform vec3 u_colors[9];
     uniform float u_spacing;
-    uniform float u_colorNoiseSize;
     uniform float u_colorNoiseStrength;
     uniform float u_shapeSize;
     uniform float u_time;
@@ -49,7 +48,7 @@ export const fragmentShader = `
      
         color = mix(color, u_colors[index], tOuter);
 
-        float colorNoise = noise_2d(v_position * u_viewportSize * u_colorNoiseSize).x;
+        float colorNoise = filmGrainNoise(v_Uv);
         // u_colorNoiseStrength 会影响噪点的强度
         color += colorNoise * u_colorNoiseStrength;
 

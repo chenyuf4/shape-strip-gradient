@@ -21,7 +21,6 @@ const Gradient = () => {
     color8,
     color9,
     spacing,
-    colorNoiseSize,
     colorNoiseStrength,
     shapeSize,
     bounceSpeed,
@@ -42,8 +41,7 @@ const Gradient = () => {
       shapeSize: { value: 0.4, min: 0.1, max: 1.0, step: 0.001 },
     }),
     noise: folder({
-      colorNoiseStrength: { value: 0.3, min: 0, max: 1.0, step: 0.01 },
-      colorNoiseSize: { value: 0.62, min: 0.01, max: 5.0, step: 0.01 },
+      colorNoiseStrength: { value: 0.16, min: 0, max: 1.0, step: 0.01 },
     }),
     animation: folder({
       bounceSpeed: { value: 0.8, min: 0, max: 1.0, step: 0.01 },
@@ -80,7 +78,6 @@ const Gradient = () => {
       },
       u_spacing: { value: spacing },
       u_viewportSize: { value: new THREE.Vector2(size.width, size.height) },
-      u_colorNoiseSize: { value: colorNoiseSize },
       u_colorNoiseStrength: { value: colorNoiseStrength },
       u_shapeSize: { value: shapeSize },
       u_time: { value: 0 },
@@ -111,7 +108,6 @@ const Gradient = () => {
         new THREE.Color(color9),
       ];
       meshRef.current.material.uniforms.u_spacing.value = spacing;
-      meshRef.current.material.uniforms.u_colorNoiseSize.value = colorNoiseSize;
       meshRef.current.material.uniforms.u_colorNoiseStrength.value =
         colorNoiseStrength;
       meshRef.current.material.uniforms.u_shapeSize.value = shapeSize;
